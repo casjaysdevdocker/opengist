@@ -44,7 +44,7 @@ ROOT_FILE_PREFIX="/config/secure/auth/root" # directory to save username/passwor
 USER_FILE_PREFIX="/config/secure/auth/user" # directory to save username/password for normal user
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # set the database directory
-DATABASE_DIR="${DATABASE_DIR_OPENGIST:-/data/db/opengist}"
+DATABASE_DIR="${DATABASE_DIR_OPENGIST:-/data/db/sqlite3/opengist}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Additional predefined variables
 
@@ -53,16 +53,16 @@ DATABASE_DIR="${DATABASE_DIR_OPENGIST:-/data/db/opengist}"
 SERVICE_PORT=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # execute command variables
-SERVICE_UID="0"                               # set the user id
-SERVICE_USER="root"                           # execute command as another user
-EXEC_CMD_BIN="opengist"                       # command to execute
-EXEC_CMD_ARGS="-config $CONF_DIR/config.yaml" # command arguments
+SERVICE_UID="0"                              # set the user id
+SERVICE_USER="root"                          # execute command as another user
+EXEC_CMD_BIN="opengist"                      # command to execute
+EXEC_CMD_ARGS="-config $ETC_DIR/config.yaml" # command arguments
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Is this service a web server
 IS_WEB_SERVER="no"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Is this service a database server
-IS_DATABASE_SERVICE="no"
+IS_DATABASE_SERVICE="yes"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Additional variables
 
@@ -86,7 +86,7 @@ ADD_APPLICATION_FILES=""
 ADD_APPLICATION_DIRS=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 APPLICATION_FILES="$LOG_DIR/opengist.log"
-APPLICATION_DIRS="$RUN_DIR $ETC_DIR $CONF_DIR $LOG_DIR /data/db/sqlite3/opengist"
+APPLICATION_DIRS="$RUN_DIR $ETC_DIR $CONF_DIR $LOG_DIR"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # use this function to update config files - IE: change port
 __update_conf_files() {

@@ -2,7 +2,7 @@
 log-level: info
 
 # If not set, uses the URL from the request
-external-url:
+#external-url:
 
 # Prevents the creation of new accounts (either `true` or `false`). Default: false
 disable-signup: false
@@ -17,7 +17,7 @@ db-filename: /data/db/sqlite3/opengist/opengist.db
 http.host: 0.0.0.0
 
 # Port to bind to. Default: 6157
-http.port: 80
+http.port: 6157
 
 # Enable or disable git operations (clone, pull, push) via HTTP (either `true` or `false`). Default: true
 http.git-enabled: true
@@ -26,10 +26,10 @@ http.git-enabled: true
 http.tls-enabled: false
 
 # Path to the TLS certificate file if TLS is enabled
-http.cert-file:
+#http.cert-file:
 
 # Path to the TLS key file if TLS is enabled
-http.key-file:
+#http.key-file:
 
 # Enable or disable SSH built-in server
 ssh.git-enabled: true
@@ -39,9 +39,8 @@ ssh.host: 0.0.0.0
 
 # Port to bind to. Default: 2222
 ssh.port: 2222
-
 # Public domain for the Git SSH connection, if it has to be different from the HTTP one.
-ssh.external-domain:
+#ssh.external-domain:
 
 # Path or alias to ssh-keygen executable. Default: ssh-keygen
-ssh.keygen-executable: ssh-keygen
+#ssh.keygen-executable: ssh-keygen

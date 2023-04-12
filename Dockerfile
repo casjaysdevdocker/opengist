@@ -15,8 +15,8 @@ ARG IMAGE_REPO="ghcr.io/thomiceli/opengist"
 ARG IMAGE_VERSION="latest"
 ARG CONTAINER_VERSION="${IMAGE_VERSION}"
 
-ARG SERVICE_PORT="80"
-ARG EXPOSE_PORTS="80 2222"
+ARG SERVICE_PORT="6157"
+ARG EXPOSE_PORTS="6157 2222"
 ARG PHP_VERSION=""
 
 ARG USER="root"
@@ -97,7 +97,9 @@ RUN set -ex ; \
   pip install certbot-dns-rfc2136
 
 RUN set -ex ; \
-  [ -f "/opengist/opengist" ] && mv -f "/opengist/opengist" "/usr/local/bin/opengist" || true
+  mkdir -p /etc/opengist ; \
+  [ -f "/opengist/opengist" ] && mv -f "/opengist/opengist" "/usr/local/bin/opengist" ; \
+  cp -Rf "/usr/local/share/template-files/config/opengist/config.yaml" "/etc/opengist"
 
 RUN set -ex ; \
   echo 'Running cleanup' ; \
