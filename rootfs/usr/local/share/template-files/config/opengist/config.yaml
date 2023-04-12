@@ -1,5 +1,5 @@
 # Set the log level to one of the following: trace, debug, info, warn, error, fatal, panic. Default: warn
-log-level: warn
+log-level: info
 
 # If not set, uses the URL from the request
 external-url:
@@ -45,4 +45,3 @@ ssh.external-domain:
 
 # Path or alias to ssh-keygen executable. Default: ssh-keygen
 ssh.keygen-executable: ssh-keygen
-

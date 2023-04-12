@@ -11,7 +11,7 @@ ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data"
 ARG DEFAULT_CONF_DIR="/usr/local/share/template-files/config"
 ARG DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
 
-ARG IMAGE_REPO="casjaysdevdocker/alpine"
+ARG IMAGE_REPO="ghcr.io/thomiceli/opengist"
 ARG IMAGE_VERSION="latest"
 ARG CONTAINER_VERSION="${IMAGE_VERSION}"
 
@@ -24,7 +24,6 @@ ARG DISTRO_VERSION="${IMAGE_VERSION}"
 ARG BUILD_VERSION="${DISTRO_VERSION}"
 
 FROM tianon/gosu:latest AS gosu
-FROM ghcr.io/thomiceli/opengist AS opengist
 FROM ${IMAGE_REPO}:${DISTRO_VERSION} AS build
 ARG USER
 ARG LICENSE
@@ -62,7 +61,6 @@ RUN set -ex ; \
   echo ""
 
 COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/gosu
-COPY --from=opengist /opengist/opengist /usr/local/bin/opengist
 
 COPY ./rootfs/. /
 COPY ./Dockerfile /root/Dockerfile
@@ -99,11 +97,11 @@ RUN set -ex ; \
   pip install certbot-dns-rfc2136
 
 RUN set -ex ; \
-  echo
+  [ -f "/opengist/opengist" ] && mv -f "/opengist/opengist" "/usr/local/bin/opengist" || true
 
 RUN set -ex ; \
   echo 'Running cleanup' ; \
-  echo ""
+  echo "rm -Rf /opengist"
 
 RUN set -ex ; \
   rm -Rf "/config" "/data" ; \
