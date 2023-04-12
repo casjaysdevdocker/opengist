@@ -24,6 +24,7 @@ ARG DISTRO_VERSION="${IMAGE_VERSION}"
 ARG BUILD_VERSION="${DISTRO_VERSION}"
 
 FROM tianon/gosu:latest AS gosu
+FROM ghcr.io/thomiceli/opengist AS opengist
 FROM ${IMAGE_REPO}:${DISTRO_VERSION} AS build
 ARG USER
 ARG LICENSE
@@ -61,6 +62,7 @@ RUN set -ex ; \
   echo ""
 
 COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/gosu
+COPY --from=opengist /opengist/opengist /usr/local/bin/opengist
 
 COPY ./rootfs/. /
 COPY ./Dockerfile /root/Dockerfile
