@@ -2,7 +2,7 @@
 ARG LICENSE="MIT"
 ARG IMAGE_NAME="opengist"
 ARG PHP_SERVER="opengist"
-ARG BUILD_DATE="Wed Apr 12 04:02:00 PM EDT 2023"
+ARG BUILD_DATE="Wed Apr 12 05:51:09 PM EDT 2023"
 ARG LANGUAGE="en_US.UTF-8"
 ARG TIMEZONE="America/New_York"
 ARG WWW_ROOT_DIR="/data/htdocs"
@@ -11,7 +11,7 @@ ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data"
 ARG DEFAULT_CONF_DIR="/usr/local/share/template-files/config"
 ARG DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
 
-ARG IMAGE_REPO="alpine"
+ARG IMAGE_REPO="casjaysdevdocker/alpine"
 ARG IMAGE_VERSION="latest"
 ARG CONTAINER_VERSION="${IMAGE_VERSION}"
 
@@ -24,7 +24,6 @@ ARG DISTRO_VERSION="${IMAGE_VERSION}"
 ARG BUILD_VERSION="${DISTRO_VERSION}"
 
 FROM tianon/gosu:latest AS gosu
-FROM ghcr.io/thomiceli/opengist AS opengist
 FROM ${IMAGE_REPO}:${DISTRO_VERSION} AS build
 ARG USER
 ARG LICENSE
@@ -45,7 +44,7 @@ ARG DISTRO_VERSION
 ARG PHP_VERSION
 
 ARG PACK_LIST="bash bash-completion git curl wget sudo unzip iproute2 ssmtp openssl jq ca-certificates tzdata mailcap ncurses util-linux pciutils usbutils coreutils binutils findutils grep rsync zip certbot tini certbot py3-pip procps net-tools coreutils sed gawk grep attr findutils readline lsof less curl shadow \
-  openssh gnupg xz gcc musl-dev libstdc++"
+  "
 
 ENV ENV=~/.bashrc
 ENV SHELL="/bin/sh"
@@ -58,64 +57,63 @@ ENV HOSTNAME="casjaysdev-opengist"
 USER ${USER}
 WORKDIR /root
 
-RUN set -ex
-echo ""
+RUN set -ex ; \
+  echo ""
 
 COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/gosu
-COPY --from=opengist /opengist/opengist /usr/local/bin/opengist
 
 COPY ./rootfs/. /
 COPY ./Dockerfile /root/Dockerfile
-RUN set -ex
-echo ""
 
-RUN set -ex
-rm -Rf "/etc/apk/repositories"
-[ "$DISTRO_VERSION" = "latest" ] && DISTRO_VERSION="edge"
-[ "$DISTRO_VERSION" = "edge" ] || DISTRO_VERSION="v${DISTRO_VERSION}"
-mkdir -p "${DEFAULT_DATA_DIR}" "${DEFAULT_CONF_DIR}" "${DEFAULT_TEMPLATE_DIR}"
-echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/main" >>"/etc/apk/repositories"
-echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/community" >>"/etc/apk/repositories"
-if [ "${DISTRO_VERSION}" = "edge" ]; then echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/testing" >>"/etc/apk/repositories"; fi
-apk -U upgrade --no-cache && apk add --no-cache ${PACK_LIST}
+RUN set -ex ; \
+  echo ""
 
-RUN set -ex
-echo "$TIMEZONE" >"/etc/timezone"
-echo 'hosts: files dns' >"/etc/nsswitch.conf"
-[ -f "/usr/share/zoneinfo/${TZ}" ] && ln -sf "/usr/share/zoneinfo/${TZ}" "/etc/localtime"
-PHP_FPM="$(ls /usr/*bin/php*fpm* 2>/dev/null || echo '')"
-[ -n "$PHP_FPM" ] && [ -z "$(type -P php-fpm)" ] && ln -sf "$PHP_FPM" "/usr/bin/php-fpm" || true
-if [ -f "/etc/profile.d/color_prompt.sh.disabled" ]; then mv -f "/etc/profile.d/color_prompt.sh.disabled" "/etc/profile.d/color_prompt.sh"; fi
+RUN set -ex ; \
+  rm -Rf "/etc/apk/repositories"; \
+  [ "$DISTRO_VERSION" = "latest" ] && DISTRO_VERSION="edge"; \
+  [ "$DISTRO_VERSION" = "edge" ] || DISTRO_VERSION="v${DISTRO_VERSION}" ; \
+  mkdir -p "${DEFAULT_DATA_DIR}" "${DEFAULT_CONF_DIR}" "${DEFAULT_TEMPLATE_DIR}"; \
+  echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/main" >>"/etc/apk/repositories"; \
+  echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/community" >>"/etc/apk/repositories"; \
+  if [ "${DISTRO_VERSION}" = "edge" ]; then echo "http://dl-cdn.alpinelinux.org/alpine/${DISTRO_VERSION}/testing" >>"/etc/apk/repositories" ; fi ; \
+  apk -U upgrade --no-cache && apk add --no-cache ${PACK_LIST}
 
-RUN set -ex
-touch "/etc/profile" "/root/.profile"
-{ [ -f "/etc/bash/bashrc" ] && cp -Rf "/etc/bash/bashrc" "/root/.bashrc"; } || { [ -f "/etc/bashrc" ] && cp -Rf "/etc/bashrc" "/root/.bashrc"; } || { [ -f "/etc/bash.bashrc" ] && cp -Rf "/etc/bash.bashrc" "/root/.bashrc"; }
-sed -i 's|root:x:.*|root:x:0:0:root:/root:/bin/bash|g' "/etc/passwd"
-grep -s -q 'alias quit' "/root/.bashrc" || printf '# Profile\n\n%s\n%s\n%s\n' '. /etc/profile' '. /root/.profile' "alias quit='exit 0 2>/dev/null'" >>"/root/.bashrc"
-[ -f "/usr/local/etc/docker/env/default.sample" ] && [ -d "/etc/profile.d" ] &&
-  cp -Rf "/usr/local/etc/docker/env/default.sample" "/etc/profile.d/container.env.sh" && chmod 755 "/etc/profile.d/container.env.sh"
-BASH_CMD="$(type -P bash)"
-[ -f "$BASH_CMD" ] && rm -rf "/bin/sh" && ln -sf "$BASH_CMD" "/bin/sh"
-pip install certbot-dns-rfc2136
+RUN set -ex ; \
+  echo "$TIMEZONE" >"/etc/timezone" ; \
+  echo 'hosts: files dns' >"/etc/nsswitch.conf" ; \
+  [ -f "/usr/share/zoneinfo/${TZ}" ] && ln -sf "/usr/share/zoneinfo/${TZ}" "/etc/localtime" ; \
+  PHP_FPM="$(ls /usr/*bin/php*fpm* 2>/dev/null || echo '')" ; \
+  [ -n "$PHP_FPM" ] && [ -z "$(type -P php-fpm)" ] && ln -sf "$PHP_FPM" "/usr/bin/php-fpm" || true ; \
+  if [ -f "/etc/profile.d/color_prompt.sh.disabled" ]; then mv -f "/etc/profile.d/color_prompt.sh.disabled" "/etc/profile.d/color_prompt.sh"; fi
 
-RUN set -ex
-echo
+RUN set -ex ; \
+  touch "/etc/profile" "/root/.profile" ; \
+  { [ -f "/etc/bash/bashrc" ] && cp -Rf "/etc/bash/bashrc" "/root/.bashrc" ; } || { [ -f "/etc/bashrc" ] && cp -Rf "/etc/bashrc" "/root/.bashrc" ; } || { [ -f "/etc/bash.bashrc" ] && cp -Rf "/etc/bash.bashrc" "/root/.bashrc" ; }; \
+  sed -i 's|root:x:.*|root:x:0:0:root:/root:/bin/bash|g' "/etc/passwd" ; \
+  grep -s -q 'alias quit' "/root/.bashrc" || printf '# Profile\n\n%s\n%s\n%s\n' '. /etc/profile' '. /root/.profile' "alias quit='exit 0 2>/dev/null'" >>"/root/.bashrc" ; \
+  [ -f "/usr/local/etc/docker/env/default.sample" ] && [ -d "/etc/profile.d" ] && \
+  cp -Rf "/usr/local/etc/docker/env/default.sample" "/etc/profile.d/container.env.sh" && chmod 755 "/etc/profile.d/container.env.sh" ; \
+  BASH_CMD="$(type -P bash)" ; [ -f "$BASH_CMD" ] && rm -rf "/bin/sh" && ln -sf "$BASH_CMD" "/bin/sh" ; \
+  pip install certbot-dns-rfc2136
 
-RUN set -ex
-echo 'Running cleanup'
-echo ""
+RUN set -ex ; \
+  echo
 
-RUN set -ex
-rm -Rf "/config" "/data"
-rm -rf /etc/systemd/system/*.wants/*
-rm -rf /lib/systemd/system/systemd-update-utmp*
-rm -rf /lib/systemd/system/anaconda.target.wants/*
-rm -rf /lib/systemd/system/local-fs.target.wants/*
-rm -rf /lib/systemd/system/multi-user.target.wants/*
-rm -rf /lib/systemd/system/sockets.target.wants/*udev*
-rm -rf /lib/systemd/system/sockets.target.wants/*initctl*
-rm -Rf /usr/share/doc/* /usr/share/info/* /tmp/* /var/tmp/* /var/cache/*/*
-if [ -d "/lib/systemd/system/sysinit.target.wants" ]; then cd "/lib/systemd/system/sysinit.target.wants" && rm -f $(ls | grep -v systemd-tmpfiles-setup); fi
+RUN set -ex ; \
+  echo 'Running cleanup' ; \
+  echo ""
+
+RUN set -ex ; \
+  rm -Rf "/config" "/data" ; \
+  rm -rf /etc/systemd/system/*.wants/* ; \
+  rm -rf /lib/systemd/system/systemd-update-utmp* ; \
+  rm -rf /lib/systemd/system/anaconda.target.wants/*; \
+  rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+  rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+  rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+  rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+  rm -Rf /usr/share/doc/* /usr/share/info/* /tmp/* /var/tmp/* /var/cache/*/* ; \
+  if [ -d "/lib/systemd/system/sysinit.target.wants" ]; then cd "/lib/systemd/system/sysinit.target.wants" && rm -f $(ls | grep -v systemd-tmpfiles-setup) ; fi
 
 RUN echo "Init done"
 
