@@ -39,7 +39,7 @@ if [ -n "$API_URL" ]; then
 	curl -q -LSsf "$API_URL" -o "$TMP_FILE" && tar xzf "$TMP_FILE" -C "/tmp"
 	if [ -f "$TMP_DIR/opengist" ]; then
 		[ -d "/etc/opengist" ] || mkdir -p "/etc/opengist"
-		mv -f "$$TMP_BIN" "$BIN_PATH" && chmod -Rf 755 "$BIN_PATH"
+		mv -f "$TMP_BIN" "$BIN_PATH" && chmod -Rf 755 "$BIN_PATH"
 		rm -Rf "$TMP_FILE" "$TMP_DIR"
 	else
 		exitCode=1
