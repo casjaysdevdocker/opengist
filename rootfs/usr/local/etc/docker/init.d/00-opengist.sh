@@ -171,7 +171,7 @@ user_pass="${OPENGIST_USER_PASS_WORD:-}" # normal user password
 [ -f "/config/env/opengist.sh" ] && . "/config/env/opengist.sh"               # Overwrite the variabes
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Additional predefined variables
-
+DATABASE_DIR="/data/db/sqlite"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Additional variables
 
@@ -261,7 +261,7 @@ __update_conf_files() {
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - -
 	# define actions
-
+  [ "$DATABASE_DIR" ] && chown -Rf $SERVICE_USER:$SERVICE_GROUP "$DATABASE_DIR"
 	# allow custom functions
 	if builtin type -t __update_conf_files_local | grep -q 'function'; then __update_conf_files_local; fi
 	# exit function
