@@ -156,7 +156,7 @@ RUN echo "Custom Applications"; \
   echo ""
 
 RUN echo "Running custom commands"; \
-  if [ -f "/root/docker/setup/05-custom.sh" ];then echo "Running the custom script";/root/docker/setup/05-custom.sh||{ echo "Failed to execute /root/docker/setup/05-custom.sh" && exit 10; };echo "Done running the custom script";fi; \
+  if [ -f "/root/docker/setup/05-custom.sh" ];then echo "Running the custom script";/root/docker/setup/05-custom.sh||{ echo "Failed to execute /root/docker/setup/05-custom.sh" >&2 && exit 10; };echo "Done running the custom script";fi; \
   echo ""
 
 RUN echo "Running final commands before cleanup"; \
@@ -254,6 +254,5 @@ EXPOSE ${SERVICE_PORT} ${ENV_PORTS}
 
 STOPSIGNAL SIGRTMIN+3
 
-CMD [  "/usr/local/bin/entrypoint.sh" ]
-ENTRYPOINT [ "tini", "-p", "SIGTERM","--" ]
+ENTRYPOINT [ "tini", "-p", "SIGTERM","--", "/usr/local/bin/entrypoint.sh" ]
 HEALTHCHECK --start-period=10m --interval=5m --timeout=15s CMD [ "/usr/local/bin/entrypoint.sh", "healthcheck" ]

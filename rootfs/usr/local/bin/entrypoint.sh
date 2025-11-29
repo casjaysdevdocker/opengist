@@ -401,26 +401,23 @@ __run_message
 # Just start services
 START_SERVICES="${START_SERVICES:-SYSTEM_INIT}"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-# Never start services for these options
-[ "$1" = "cron" ] && START_SERVICES="no"
-[ "$1" = "tail" ] && START_SERVICES="no"
-[ "$1" = "logs" ] && START_SERVICES="no"
-[ "$1" = "cron" ] && START_SERVICES="no"
-[ "$1" = "backup" ] && START_SERVICES="no"
-[ "$1" = "healthcheck" ] && START_SERVICES="no"
-[ "$1" = "init" ] && START_SERVICES="no" && CONTAINER_INIT="yes"
-[ "$2" = "init" ] && START_SERVICES="no" && CONTAINER_INIT="yes"
-echo "$1" | grep -qE '^(sh|bash)$|/*/(sh|bash)$' && START_SERVICES="no"
+# Determine if we should start services based on command
+SKIP_SERVICE_START="no"
+[ "$1" = "init" ] && SKIP_SERVICE_START="yes" && CONTAINER_INIT="yes"
+[ "$2" = "init" ] && SKIP_SERVICE_START="yes" && CONTAINER_INIT="yes"
+echo "$1" | grep -qE '^(sh|bash)$|/*/(sh|bash)$' && SKIP_SERVICE_START="yes"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-# Start all services if no pidfile
+# Start all services if no pidfile and not skipping
 if [ "$START_SERVICES" = "yes" ] || [ -z "$1" ]; then
-	[ "$1" = "start" ] && shift 1
-	[ "$1" = "all" ] && shift 1
-	rm -Rf "/run"/*/*pid 2>/dev/null || true
-	echo "$$" >"$ENTRYPOINT_PID_FILE"
-	__start_init_scripts "/usr/local/etc/docker/init.d"
+	if [ "$SKIP_SERVICE_START" = "no" ]; then
+		[ "$1" = "start" ] && shift 1
+		[ "$1" = "all" ] && shift 1
+		rm -Rf "/run"/*/*pid 2>/dev/null || true
+		echo "$$" >"$ENTRYPOINT_PID_FILE"
+		__start_init_scripts "/usr/local/etc/docker/init.d"
+		CONTAINER_INIT="${CONTAINER_INIT:-no}"
+	fi
 	START_SERVICES="no"
-	CONTAINER_INIT="${CONTAINER_INIT:-no}"
 fi
 export START_SERVICES CONTAINER_INIT ENTRYPOINT_PID_FILE
 # - - - - - - - - - - - - - - - - - - - - - - - - -
