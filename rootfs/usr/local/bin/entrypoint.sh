@@ -371,11 +371,6 @@ else
 	rm -f /run/__start_init_scripts.pid /run/init.d/*.pid /run/*.pid 2>/dev/null || true
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-if [ ! -f "/run/__start_init_scripts.pid" ]; then
-	START_SERVICES="yes"
-	touch /run/__start_init_scripts.pid
-fi
-# - - - - - - - - - - - - - - - - - - - - - - - - -
 [ "$ENTRYPOINT_MESSAGE" = "yes" ] && __printf_space "40" "The containers ip address is:" "$CONTAINER_IP4_ADDRESS"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Show configured listing processes
@@ -402,10 +397,10 @@ __run_message
 START_SERVICES="${START_SERVICES:-SYSTEM_INIT}"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Determine if we should start services based on command
+# Only skip service start for the 'init' command
 SKIP_SERVICE_START="no"
 [ "$1" = "init" ] && SKIP_SERVICE_START="yes" && CONTAINER_INIT="yes"
 [ "$2" = "init" ] && SKIP_SERVICE_START="yes" && CONTAINER_INIT="yes"
-echo "$1" | grep -qE '^(sh|bash)$|/*/(sh|bash)$' && SKIP_SERVICE_START="yes"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Start all services if no pidfile and not skipping
 if [ "$START_SERVICES" = "yes" ] || [ -z "$1" ]; then
