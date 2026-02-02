@@ -106,7 +106,7 @@ LOG_DIR="/data/logs/opengist" # set log directory
 WORK_DIR=""
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # port which service is listening on
-SERVICE_PORT=""
+SERVICE_PORT="80"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # User to use to launch service - IE: postgres
 RUNAS_USER="root" # normally root
@@ -257,7 +257,7 @@ __update_conf_files() {
 	# replace variables
 	# __replace "" "" "$CONF_DIR/opengist.conf"
 	# replace variables recursively
-	# __find_replace "" "" "$CONF_DIR"
+	__initialize_replace_variables "$ETC_DIR" "$CONF_DIR"
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - -
 	# define actions

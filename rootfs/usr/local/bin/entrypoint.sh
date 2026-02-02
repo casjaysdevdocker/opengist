@@ -363,8 +363,18 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # if no pid assume container restart - clean stale files on restart
 if [ -f "$ENTRYPOINT_PID_FILE" ]; then
-  START_SERVICES="no"
-  touch "$ENTRYPOINT_PID_FILE"
+  # Check if the PID in the file is still running
+  entrypoint_pid=$(cat "$ENTRYPOINT_PID_FILE" 2>/dev/null || echo "")
+  if [ -n "$entrypoint_pid" ] && kill -0 "$entrypoint_pid" 2>/dev/null; then
+    # Process is still running, don't restart services
+    START_SERVICES="no"
+    touch "$ENTRYPOINT_PID_FILE"
+  else
+    # PID file exists but process is dead - this is a restart
+    START_SERVICES="yes"
+    # Clean any stale PID files on restart
+    rm -f /run/__start_init_scripts.pid /run/init.d/*.pid /run/*.pid 2>/dev/null || true
+  fi
 else
   START_SERVICES=yes
   # Clean any stale PID files on first run
