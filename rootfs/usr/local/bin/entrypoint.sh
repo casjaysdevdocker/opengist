@@ -421,6 +421,9 @@ if [ "$START_SERVICES" = "yes" ] || [ -z "$1" ]; then
     echo "$$" >"$ENTRYPOINT_PID_FILE"
     __start_init_scripts "/usr/local/etc/docker/init.d"
     CONTAINER_INIT="${CONTAINER_INIT:-no}"
+    # Services started successfully - enter monitoring mode
+    __no_exit
+    exit $?
   fi
   START_SERVICES="no"
 fi
