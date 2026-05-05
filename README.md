@@ -19,17 +19,17 @@ dockermgr update opengist
 ## Install and run container
   
 ```shell
-mkdir -p "$HOME/.local/share/srv/docker/opengist/rootfs"
+mkdir -p "$HOME/.local/share/srv/docker/opengist/volumes"
 git clone "https://github.com/dockermgr/opengist" "$HOME/.local/share/CasjaysDev/dockermgr/opengist"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/opengist/rootfs/." "$HOME/.local/share/srv/docker/opengist/rootfs/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/opengist/rootfs/." "$HOME/.local/share/srv/docker/opengist/volumes/"
 docker run -d \
 --restart always \
 --privileged \
 --name casjaysdevdocker-opengist \
 --hostname opengist \
 -e TZ=${TIMEZONE:-America/New_York} \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/rootfs/data:/data:z" \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/rootfs/config:/config:z" \
+-v "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/volumes/data:/data:z" \
+-v "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/volumes/config:/config:z" \
 -p 80:80 \
 -p 2222:22 \
 casjaysdevdocker/opengist:latest
@@ -47,8 +47,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=opengist
     volumes:
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/rootfs/data:/data:z"
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/rootfs/config:/config:z"
+      - "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/volumes/data:/data:z"
+      - "$HOME/.local/share/srv/docker/casjaysdevdocker-opengist/volumes/config:/config:z"
     ports:
       - 80:80
       - 2222:22
