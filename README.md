@@ -19,10 +19,10 @@ dockermgr update opengist
 ## Install and run container
   
 ```shell
-dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/opengist/latest/rootfs"
-mkdir -p "/var/lib/srv/$USER/docker/opengist/rootfs"
+dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes"
+mkdir -p "$dockerHome"
 git clone "https://github.com/dockermgr/opengist" "$HOME/.local/share/CasjaysDev/dockermgr/opengist"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/opengist/rootfs/." "$dockerHome/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/opengist/volumes/." "$dockerHome/"
 docker run -d \
 --restart always \
 --privileged \
@@ -38,7 +38,6 @@ casjaysdevdocker/opengist:latest
 ## via docker-compose  
   
 ```yaml
-version: "2"
 services:
   ProjectName:
     image: casjaysdevdocker/opengist
@@ -47,8 +46,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=opengist
     volumes:
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/opengist/latest/rootfs/data:/data:z"
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/opengist/latest/rootfs/config:/config:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z"
     ports:
       - 80:80
     restart: always
@@ -77,3 +76,4 @@ buildx
   
 🤖 casjay: [Github](https://github.com/casjay) 🤖  
 ⛵ casjaysdevdocker: [Github](https://github.com/casjaysdevdocker) [Docker](https://hub.docker.com/u/casjaysdevdocker) ⛵  
+

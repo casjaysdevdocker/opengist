@@ -1,74 +1,92 @@
 #!/usr/bin/env bash
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202606041215-git
+# shellcheck shell=bash
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202606120507-git
 # @@Author           :  CasjaysDev
 # @@Contact          :  CasjaysDev <docker-admin@casjaysdev.pro>
 # @@License          :  WTFPL
-# @@ReadME           :
-# @@Copyright        :  Copyright: (c) 2023 CasjaysDev
-# @@Created          :  Mon Aug 28 06:48:42 PM EDT 2023
+# @@Copyright        :  Copyright 2026 CasjaysDev
+# @@Created          :  Fri Jun 12 05:07:20 AM EDT 2026
 # @@File             :  03-files.sh
 # @@Description      :  script to run files
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# shellcheck shell=bash
+# @@Changelog        :  newScript
+# @@TODO             :  Refactor code
+# @@Other            :  N/A
+# @@Resource         :  N/A
+# @@Terminal App     :  yes
+# @@sudo/root        :  yes
+# @@Template         :  templates/dockerfiles/init_scripts/03-files.sh
+# - - - - - - - - - - - - - - - - - - - - - - - - -
 # shellcheck disable=SC1001,SC1003,SC2001,SC2003,SC2016,SC2031,SC2090,SC2115,SC2120,SC2155,SC2199,SC2229,SC2317,SC2329
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-set -o pipefail
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set bash options
+set -eo pipefail
 [ "$DEBUGGER" = "on" ] && echo "Enabling debugging" && set -x$DEBUGGER_OPTIONS
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set env variables
 exitCode=0
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# Predefined actions
 if [ -d "/tmp/bin" ]; then
-  \mkdir -p "/usr/local/bin"
+  mkdir -p "/usr/local/bin"
   for bin in "/tmp/bin"/*; do
+    [ -e "$bin" ] || continue
     name="${bin##*/}"
     echo "Installing $name to /usr/local/bin/$name"
-    copy "$bin" "/usr/local/bin/$name"
-    \chmod -f +x "/usr/local/bin/$name"
+    cp -Rf "$bin" "/usr/local/bin/$name"
+    chmod -f +x "/usr/local/bin/$name"
   done
 fi
 unset bin
 if [ -d "/tmp/var" ]; then
   for var in "/tmp/var"/*; do
+    [ -e "$var" ] || continue
     name="${var##*/}"
     echo "Installing $var to /var/$name"
     if [ -d "$var" ]; then
-      \mkdir -p "/var/$name"
-      copy "$var/." "/var/$name/"
+      mkdir -p "/var/$name"
+      cp -Rf "$var/." "/var/$name/"
     else
-      copy "$var" "/var/$name"
+      cp -Rf "$var" "/var/$name"
     fi
   done
 fi
 unset var
 if [ -d "/tmp/etc" ]; then
   for config in "/tmp/etc"/*; do
+    [ -e "$config" ] || continue
     name="${config##*/}"
     echo "Installing $config to /etc/$name"
     if [ -d "$config" ]; then
-      \mkdir -p "/etc/$name"
-      copy "$config/." "/etc/$name/"
+      mkdir -p "/etc/$name"
+      cp -Rf "$config/." "/etc/$name/"
     else
-      copy "$config" "/etc/$name"
+      cp -Rf "$config" "/etc/$name"
     fi
   done
 fi
 unset config
 if [ -d "/tmp/usr" ]; then
-  for usrpath in "/tmp/usr"/*; do
-    name="${usrpath##*/}"
-    echo "Installing $usrpath to /usr/$name"
-    if [ -d "$usrpath" ]; then
-      \mkdir -p "/usr/$name"
-      copy "$usrpath/." "/usr/$name/"
-    else
-      copy "$usrpath" "/usr/$name"
-    fi
+  for share in "/tmp/usr"/*; do
+    [ -e "$share" ] || continue
+    name="${share##*/}"
+    dest="/usr/$name"
+    echo "Installing $share to $dest"
+    mkdir -p "$dest"
+    cp -Rf "$share/." "$dest/"
   done
 fi
-unset usrpath
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+unset share
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# Main script
+
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set the exit code
 exitCode=$?
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - -
 exit $exitCode
+# - - - - - - - - - - - - - - - - - - - - - - - - -
 # ex: ts=2 sw=2 et filetype=sh
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+

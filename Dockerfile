@@ -1,21 +1,17 @@
 # Docker image for opengist using the alpine template
 ARG IMAGE_NAME="opengist"
 ARG PHP_SERVER="opengist"
-ARG BUILD_DATE="202511290813"
+ARG BUILD_DATE="202606120510"
 ARG LANGUAGE="en_US.UTF-8"
 ARG TIMEZONE="America/New_York"
 ARG WWW_ROOT_DIR="/usr/local/share/httpd/default"
-ARG DEFAULT_FILE_DIR="/usr/local/share/template-files"
-ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data"
-ARG DEFAULT_CONF_DIR="/usr/local/share/template-files/config"
-ARG DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
 ARG PATH="/usr/local/etc/docker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ARG USER="root"
 ARG SHELL_OPTS="set -e -o pipefail"
 
-ARG SERVICE_PORT="80"
-ARG EXPOSE_PORTS="22"
+ARG SERVICE_PORT=""
+ARG EXPOSE_PORTS=""
 ARG PHP_VERSION="system"
 ARG NODE_VERSION="system"
 ARG NODE_MANAGER="system"
@@ -42,10 +38,6 @@ ARG EXPOSE_PORTS
 ARG BUILD_VERSION
 ARG IMAGE_VERSION
 ARG WWW_ROOT_DIR
-ARG DEFAULT_FILE_DIR
-ARG DEFAULT_DATA_DIR
-ARG DEFAULT_CONF_DIR
-ARG DEFAULT_TEMPLATE_DIR
 ARG DISTRO_VERSION
 ARG NODE_VERSION
 ARG NODE_MANAGER
@@ -54,7 +46,7 @@ ARG PHP_SERVER
 ARG SHELL_OPTS
 ARG PATH
 
-ARG PACK_LIST="git openssh "
+ARG PACK_LIST="git openssh bash-completion curl wget sudo unzip iproute2 ssmtp openssl jq tzdata mailcap ncurses util-linux pciutils usbutils coreutils binutils findutils grep rsync zip tini py3-pip procps net-tools coreutils sed gawk grep attr findutils readline lsof less curl shadow ca-certificates "
 
 ENV ENV=~/.profile
 ENV SHELL="/bin/sh"
@@ -72,7 +64,8 @@ COPY ./rootfs/. /
 
 RUN set -e; \
   echo "Updating the system and ensuring bash is installed"; \
-  pkmgr update;pkmgr install bash
+  pkmgr update;pkmgr install bash ca-certificates; \
+  update-ca-certificates
 
 RUN set -e; \
   echo "Setting up prerequisites"; \
@@ -91,7 +84,7 @@ COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/gosu
 
 RUN echo "Initializing the system"; \
   $SHELL_OPTS; \
-  mkdir -p "${DEFAULT_DATA_DIR}" "${DEFAULT_CONF_DIR}" "${DEFAULT_TEMPLATE_DIR}" "/root/docker/setup" "/etc/profile.d"; \
+  mkdir -p "/root/docker/setup" "/etc/profile.d"; \
   if [ -f "/root/docker/setup/00-init.sh" ];then echo "Running the init script";/root/docker/setup/00-init.sh||{ echo "Failed to execute /root/docker/setup/00-init.sh" >&2 && exit 10; };echo "Done running the init script";fi; \
   echo ""
 
@@ -205,10 +198,6 @@ ARG BUILD_VERSION
 ARG IMAGE_VERSION
 ARG GIT_COMMIT
 ARG WWW_ROOT_DIR
-ARG DEFAULT_FILE_DIR
-ARG DEFAULT_DATA_DIR
-ARG DEFAULT_CONF_DIR
-ARG DEFAULT_TEMPLATE_DIR
 ARG DISTRO_VERSION
 ARG NODE_VERSION
 ARG NODE_MANAGER
@@ -267,4 +256,3 @@ STOPSIGNAL SIGRTMIN+3
 
 ENTRYPOINT [ "tini", "-p", "SIGTERM","--", "/usr/local/bin/entrypoint.sh" ]
 HEALTHCHECK --start-period=10m --interval=5m --timeout=15s CMD [ "/usr/local/bin/entrypoint.sh", "healthcheck" ]
-
