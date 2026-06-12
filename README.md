@@ -24,8 +24,8 @@ docker run -d \
   -e TZ=${TIMEZONE:-America/New_York} \
   -v /var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z \
   -v /var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z \
-  -p 80:80 \
-  -p 7823:7823 \
+  -p 172.17.0.1:80:80 \
+  -p 172.17.0.1:7823:7823 \
   casjaysdevdocker/opengist:latest
 ```
 
@@ -43,8 +43,8 @@ services:
       - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z"
       - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z"
     ports:
-      - "80:80"
-      - "7823:7823"
+      - "172.17.0.1:80:80"
+      - "172.17.0.1:7823:7823"
     restart: always
 ```
 
