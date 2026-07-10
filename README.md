@@ -22,8 +22,8 @@ docker run -d \
   --name casjaysdevdocker-opengist-latest \
   --hostname opengist \
   -e TZ=${TIMEZONE:-America/New_York} \
-  -v /var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z \
-  -v /var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z \
+  -v /srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z \
+  -v /srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z \
   -p 172.17.0.1:80:80 \
   -p 172.17.0.1:7823:7823 \
   casjaysdevdocker/opengist:latest
@@ -40,8 +40,8 @@ services:
     environment:
       - TZ=America/New_York
     volumes:
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z"
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z"
+      - "/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/data:/data:z"
+      - "/srv/$USER/docker/casjaysdevdocker/opengist/latest/volumes/config:/config:z"
     ports:
       - "172.17.0.1:80:80"
       - "172.17.0.1:7823:7823"
