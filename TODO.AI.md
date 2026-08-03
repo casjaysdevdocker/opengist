@@ -18,3 +18,15 @@ Read: AI.md (Docker Template Update Runbook), Step 3/5
 - [ ] `__initialize_custom_bin_dir()` (line 1428): `create_bin_name` assigned without `local`
 - [ ] No `VERSION=` assignment in body to match the `##@Version` header (functions library —
       confirm whether versioning is required for this file type before adding)
+
+## [ ] Remove forbidden OCI labels from Dockerfile
+Read: AI.md § OCI label standard (lines 55-85)
+
+Found during the build/test pass — `gen-dockerfile --update` left the Dockerfile untouched
+(zero diff), but it still carries labels AI.md explicitly says must not exist:
+- [ ] `LABEL org.opencontainers.image.base.name="${IMAGE_NAME}"` — belongs on the base image,
+      not the app image; remove
+- [ ] `LABEL org.opencontainers.image.schema-version="${BUILD_VERSION}"` — non-spec, redundant
+      with `version`; remove
+- [ ] `LABEL org.opencontainers.image.authors="${LICENSE}"` — duplicate `authors` label with
+      the wrong value (a license string, not an author); remove or fix
