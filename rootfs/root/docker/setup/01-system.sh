@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202606120507-git
+##@Version           :  202608031101-git
 # @@Author           :  CasjaysDev
 # @@Contact          :  CasjaysDev <docker-admin@casjaysdev.pro>
 # @@License          :  WTFPL
 # @@Copyright        :  Copyright 2026 CasjaysDev
-# @@Created          :  Fri Jun 12 05:07:20 AM EDT 2026
+# @@Created          :  Mon Aug  3 11:01:46 AM EDT 2026
 # @@File             :  01-system.sh
 # @@Description      :  script to run system
 # @@Changelog        :  newScript

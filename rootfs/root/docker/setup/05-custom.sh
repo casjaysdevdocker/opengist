@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version           :  202608022207-git
+##@Version           :  202608031101-git
 # @@Author           :  CasjaysDev
 # @@Contact          :  CasjaysDev <docker-admin@casjaysdev.pro>
 # @@License          :  WTFPL
 # @@Copyright        :  Copyright 2026 CasjaysDev
-# @@Created          :  Fri Jun 12 05:07:20 AM EDT 2026
+# @@Created          :  Mon Aug  3 11:01:46 AM EDT 2026
 # @@File             :  05-custom.sh
 # @@Description      :  script to run custom
 # @@Changelog        :  newScript
@@ -23,7 +23,7 @@
 set -eo pipefail
 [ "$DEBUGGER" = "on" ] && echo "Enabling debugging" && set -x$DEBUGGER_OPTIONS
 # - - - - - - - - - - - - - - - - - - - - - - - - -
-VERSION="202608022207-git"
+VERSION="202608031101-git"
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set env variables
 OPENGIST_EXITCODE=0
