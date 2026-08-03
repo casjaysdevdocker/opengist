@@ -316,6 +316,14 @@ __update_conf_files() {
 	local exitCode=0
 	# set hostname
 	local sysname="${SERVER_NAME:-${FULL_DOMAIN_NAME:-$HOSTNAME}}"
+	# opengist's external-url must be a full URL (scheme + host); a bare hostname breaks
+	# absolute-URL generation (e.g. redirect Location headers). ssh.external-domain must
+	# stay a bare domain, so it gets its own token instead of reusing the schemed value.
+	local ssh_sysname="$sysname"
+	case "$sysname" in
+		*://*) ;;
+		*) sysname="http://$sysname" ;;
+	esac
 	# - - - - - - - - - - - - - - - - - - - - - - - - -
 	# delete files
 	#__rm ""
@@ -325,9 +333,10 @@ __update_conf_files() {
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - -
 	# replace variables
-	__replace "REPLACE_HOSTNAME" "$sysname" "$ETC_DIR/opengist.yaml"
-	__replace "REPLACE_DATA_DIR" "$DATA_DIR" "$ETC_DIR/opengist.yaml"
-	__replace "REPLACE_SERVER_PORT" "$SERVICE_PORT" "$ETC_DIR/opengist.yaml"
+	__replace "REPLACE_HOSTNAME" "$sysname" "$ETC_DIR/config.yaml"
+	__replace "REPLACE_SSH_HOSTNAME" "$ssh_sysname" "$ETC_DIR/config.yaml"
+	__replace "REPLACE_DATA_DIR" "$DATA_DIR" "$ETC_DIR/config.yaml"
+	__replace "REPLACE_SERVER_PORT" "$SERVICE_PORT" "$ETC_DIR/config.yaml"
 	# replace variables recursively
 	# __find_replace "" "" "$CONF_DIR"
 

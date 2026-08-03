@@ -47,7 +47,7 @@ ssh.host: 0.0.0.0
 ssh.port: 7823
 
 # Public domain for the Git SSH connection, if it has to be different from the HTTP one.
-ssh.external-domain: REPLACE_HOSTNAME
+ssh.external-domain: REPLACE_SSH_HOSTNAME
 
 # Path or alias to ssh-keygen executable. Default: ssh-keygen
 ssh.keygen-executable: ssh-keygen
