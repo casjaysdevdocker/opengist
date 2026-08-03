@@ -830,6 +830,18 @@ if [ -n "$DATABASE_ADMIN_WWW_ROOT" ]; then
 	fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - -
+# Ensure the database directory ownership gets fixed by __fix_permissions;
+# it lives under DATABASE_BASE_DIR, outside APPLICATION_DIRS, so a UID
+# mismatch here (e.g. after the service user gets a new random UID) is
+# never corrected, leaving a stale-owned sqlite file that opengist can't
+# write to and causing a permanent restart loop.
+if [ -n "$DATABASE_DIR" ]; then
+	ADD_APPLICATION_DIRS="$ADD_APPLICATION_DIRS $DATABASE_DIR"
+fi
+if [ -n "$DATABASE_BASE_DIR" ]; then
+	ADD_APPLICATION_DIRS="$ADD_APPLICATION_DIRS $DATABASE_BASE_DIR"
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allow variables via imports - Overwrite existing
 if [ -f "/config/env/${SERVICE_NAME:-$SCRIPT_NAME}.sh" ]; then
 	. "/config/env/${SERVICE_NAME:-$SCRIPT_NAME}.sh"
